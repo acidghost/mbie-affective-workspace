@@ -1,5 +1,6 @@
 tmp/
 node_modules/
+nwjs/
 nw-sample-apps-master/
 .idea
 
