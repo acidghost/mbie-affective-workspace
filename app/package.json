@@ -1,0 +1,27 @@
+{
+  "name": "mbie-project",
+  "description": "",
+  "version": "0.0.0",
+  "devDependencies": {
+    "concat-files": "^0.1.0",
+    "grunt": "^0.4.5",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-compress": "^0.13.0",
+    "grunt-contrib-copy": "^0.8.0",
+    "grunt-contrib-jade": "~0.15.0",
+    "grunt-contrib-rename": "0.0.3",
+    "load-grunt-tasks": "^3.1.0",
+    "semver": "^4.3.4",
+    "time-grunt": "^1.2.0",
+    "grunt-contrib-coffee": "~0.13.0",
+    "grunt-contrib-watch": "~0.6.1",
+    "coffeelint": "~1.11.1",
+    "grunt-coffeelint": "0.0.13",
+    "grunt-contrib-jshint": "~0.11.2",
+    "grunt-contrib-less": "~1.0.1"
+  },
+  "dependencies": {
+    "jade": "~1.11.0",
+    "johnny-five": "^0.8.95"
+  }
+}

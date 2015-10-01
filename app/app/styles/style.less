@@ -1,0 +1,23 @@
+@import "../components/bootstrap/less/bootstrap";
+
+@body-bg: @gray-darker;
+@text-color: whitesmoke;
+@modal-content-bg: @body-bg;
+@modal-content-border-color: fadeOut(whitesmoke, 80%);
+@modal-header-border-color: @gray-dark;
+@hr-border: @gray-dark;
+
+body {
+
+  & > .container:nth-of-type(1) {
+    margin-top: 30px;
+    margin-bottom: 50px;
+  }
+
+  .panel {
+    .panel-body {
+      background-color: @body-bg;
+    }
+  }
+
+}

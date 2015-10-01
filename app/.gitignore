@@ -1,0 +1,12 @@
+tmp/
+node_modules/
+nw-sample-apps-master/
+.idea
+
+app/**/*.html
+app/**/*.js
+app/**/*.css
+
+app/components
+
+dist
