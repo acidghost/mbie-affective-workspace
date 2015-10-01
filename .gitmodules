@@ -1,0 +1,3 @@
+[submodule "arduino/TinkerKit"]
+	path = arduino/TinkerKit
+	url = git@github.com:TinkerKit/TinkerKit.git
