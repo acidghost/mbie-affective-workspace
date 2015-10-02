@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <title>MBIE Project</title>
+    <link rel="stylesheet" href="styles/style.css" />
+    <script type="text/javascript" src="components/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="components/lodash/lodash.js"></script>
+    <script type="text/javascript" src="components/angular/angular.js"></script>
+    <script type="text/javascript" src="components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script type="text/javascript" src="components/angular-bootstrap/ui-bootstrap.js"></script>
+    <script type="text/javascript" src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script type="text/javascript" src="components/ngstorage/ngStorage.js"></script>
+    <script type="text/javascript" src="components/d3/d3.min.js"></script>
+    <script type="text/javascript" src="components/c3/c3.js"></script>
+    <script type="text/javascript" src="scripts/app.js"></script>
+  </head>
+
+  <body ng-app="mbieProjectApp" ng-controller="AppCtrl">
+    <div id="window-controls">
+      <button class="btn btn-sm btn-default" btn-checkbox ng-model="$root.playing" ng-disabled="systemStopped">
+        <span ng-switch="playing">
+          <span ng-switch-when="true">
+            <i class="fa fa-pause"></i> Pause
+          </span>
+          <span ng-switch-when="false">
+            <i class="fa fa-play"></i> Play
+          </span>
+        </span>
+      </button>
+      <button class="btn btn-sm btn-danger" ng-click="exitApp()">
+        <i class="fa fa-close"></i> Close
+      </button>
+    </div>
+    <div class="container">
+      <section id="charts" ng-include="'templates/charts.html'"></section>
+      <div class="row">
+        <div class="col-xs-12">
+          <ul class="nav nav-pills" id="navigation">
+            <li role="presentation" ui-sref-active="active"><a ui-sref="home">Home</a></li>
+            <li role="presentation" ui-sref-active="active"><a ui-sref="data">Data</a></li>
+          </ul>
+        </div>
+      </div>
+      <section ui-view></section>
+    </div>
+  </body>
+
+</html>

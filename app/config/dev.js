@@ -4,10 +4,14 @@
 
 module.exports = {
 
-  debug: false,
+  debug: {
+    sensors: false,
+    info: true
+  },
   freq: 100,
   loopFreq: 1000,
   chartsWindow: 10,
+  postureThreshold: 0.5,
   accel: [
     {
       pins: [ 'I0', 'I1' ],

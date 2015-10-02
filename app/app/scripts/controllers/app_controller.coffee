@@ -6,14 +6,15 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
     five = require 'johnny-five'
     board = new five.Board()
 
+    gui = require 'nw.gui'
+
     scaleAngle = (angle) ->
       (angle - -180) / (180 - -180)
 
     started = false
     drawn = false
-#    timeAxis = [1..config.chartsWindow].map (i) ->
-#      Date.now() + (1000 * i)
-#    postureAxis = [1..config.chartsWindow].map -> 0.0
+    $rootScope.playing = true
+    $rootScope.systemStopped = false
     timeAxis = [ Date.now() ]
     postureAxis = [ 0.0 ]
 
@@ -26,7 +27,7 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
       posture: 0
 
     board.on 'ready', ->
-      console.log 'Board ready' if config.debug
+      console.log 'Board ready' if config.debug.info
       accelerometers = config.accel.map (conf) -> new five.Accelerometer conf
 
       if weights.length is 0
@@ -40,6 +41,7 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
 
       accelerometers.forEach (accelerometer, index) ->
         accelerometer.on 'data', ->
+          return if not $rootScope.playing or $rootScope.systemStopped
           started = true unless started
           if Date.now() - timers[index] > config.freq
             timers[index] = Date.now()
@@ -48,10 +50,11 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
               degree: this.inclination
               scaled: scaleAngle this.inclination
 
-            console.log 'Inclination', index, '\t', inclination if config.debug
+            console.log 'Inclination', index, '\t', inclination if config.debug.sensors
             $rootScope.$apply -> $rootScope.inclinations[index] = inclination
 
       mainLoop = ->
+        return if not $rootScope.playing or $rootScope.systemStopped
         if started
           unless drawn
             drawCharts()
@@ -63,10 +66,22 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
             # num_posture += inclination.scaled * weights[index]
             num_posture += distance * weights[index]
 
-          $rootScope.posture.time = Date.now()
-          $rootScope.posture.posture += num_posture / weights_sum
-          insertPostureInChart $rootScope.posture
-          console.log 'Posture', $rootScope.posture if config.debug
+          posture =
+            time: Date.now()
+            posture: $rootScope.posture.posture + num_posture / weights_sum
+          $rootScope.posture = posture
+          insertPostureInChart posture
+          console.log 'Posture', posture if config.debug.sensors
+
+          if Math.abs(posture.posture) > config.postureThreshold
+            console.log 'Posture th. reached' if config.debug.info
+            $rootScope.$apply ->
+              $rootScope.systemStopped = true
+              $rootScope.playing = false
+              $rootScope.userQuestions = [
+                q: 'Is your mood okay right now?'
+                a: [ 'No', 'Yes' ]
+              ]
 
       window.setInterval mainLoop, config.loopFreq
 
@@ -74,7 +89,7 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
       $localStorage.preferred_values = $rootScope.preferred_values
       $localStorage.weights = weights
 
-      window.close()
+      gui.App.quit()
 
     insertPostureInChart = (posture) ->
       return unless $rootScope.postureChart
@@ -83,8 +98,6 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
       if timeAxis.length > config.chartsWindow
         timeAxis.shift()
         postureAxis.shift()
-
-      console.log postureAxis.length, postureAxis
 
       xAxis = timeAxis.slice()
       yAxis = postureAxis.slice()

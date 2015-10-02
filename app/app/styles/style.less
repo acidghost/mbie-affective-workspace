@@ -1,12 +1,18 @@
 @import "../components/bootstrap/less/bootstrap";
 @import "../components/c3/c3.css";
+@import "../components/font-awesome/css/font-awesome.css";
 
 @body-bg: @gray-darker;
 @text-color: whitesmoke;
+@link-color: @gray-lighter;
+@link-hover-color: @gray-dark;
 @modal-content-bg: @body-bg;
 @modal-content-border-color: fadeOut(whitesmoke, 80%);
 @modal-header-border-color: @gray-dark;
 @hr-border: @gray-dark;
+@nav-pills-active-link-hover-bg: @gray-lighter;
+@nav-pills-border-radius: 3px;
+@nav-pills-active-link-hover-color: @gray-darker;
 
 body {
 
@@ -15,6 +21,19 @@ body {
     right: 12px;
     top: 12px;
     z-index: 999;
+  }
+
+  #charts {
+    margin-top: 56px;
+  }
+
+  #navigation {
+    margin-bottom: 12px;
+    li {
+      a {
+        padding: 6px 18px;
+      }
+    }
   }
 
   & > .container:nth-of-type(1) {

@@ -10,5 +10,8 @@ app.config [ '$urlRouterProvider', '$stateProvider', 'viewProvider',
         url: '/'
         template: viewProvider.renderView 'home'
         controller: 'HomeCtrl'
+      .state 'data',
+        url: '/data'
+        template: viewProvider.renderView 'data'
 
 ]
