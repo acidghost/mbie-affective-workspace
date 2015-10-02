@@ -1,2 +1,32 @@
-h1 {{ inclination.degree }} °
-h2 {{ inclination.scaled }}
+.row
+  .col-xs-12
+    .panel.panel-default
+      .panel-heading
+        .panel-title
+          h5 Raw data
+      .panel-body
+        .row
+          .col-xs-6
+            small {{ posture.time }}
+          .col-xs-6
+            strong {{ posture.posture }}
+        .row(ng-repeat='inclination in inclinations')
+          .col-xs-4
+            small {{ inclination.time }}
+          .col-xs-4
+            strong {{ inclination.degree.toFixed(4) }} °
+          .col-xs-4 {{ inclination.scaled.toFixed(4) }}
+
+.row
+  .col-xs-12
+    #posture-chart
+
+.row
+  .col-xs-12
+    .panel.panel-default
+      .panel-heading
+        .panel-title
+          h5 User validation
+      .panel-body
+        p Some user validation questions here...
+

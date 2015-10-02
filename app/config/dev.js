@@ -4,11 +4,19 @@
 
 module.exports = {
 
-  debug: true,
+  debug: false,
   freq: 100,
-  accel: {
-    pins: [ 'I0', 'I1' ],
-    autoCalibrate: false
-  }
+  loopFreq: 1000,
+  chartsWindow: 10,
+  accel: [
+    {
+      pins: [ 'I0', 'I1' ],
+      autoCalibrate: false
+    },
+    {
+      pins: [ 'I2', 'I3' ],
+      autoCalibrate: false
+    }
+  ]
 
 };

@@ -9,20 +9,107 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
     scaleAngle = (angle) ->
       (angle - -180) / (180 - -180)
 
+    started = false
+    drawn = false
+#    timeAxis = [1..config.chartsWindow].map (i) ->
+#      Date.now() + (1000 * i)
+#    postureAxis = [1..config.chartsWindow].map -> 0.0
+    timeAxis = [ Date.now() ]
+    postureAxis = [ 0.0 ]
+
+    timers = []
+    weights = $localStorage.weights or []
+    preferred_values = $localStorage.preferred_values or []
+    $rootScope.inclinations = []
+    $rootScope.posture =
+      time: 0
+      posture: 0
+
     board.on 'ready', ->
       console.log 'Board ready' if config.debug
-      $rootScope.weight = 1
-      accel = new five.Accelerometer config.accel
+      accelerometers = config.accel.map (conf) -> new five.Accelerometer conf
 
-      time = Date.now()
-      accel.on 'acceleration', ->
-        if Date.now() - time > config.freq
-          time = Date.now()
-          inclination =
-            degree: this.inclination
-            scaled: scaleAngle this.inclination
+      if weights.length is 0
+        weights = [1..accelerometers.length].map -> 1
+      if preferred_values.length is 0
+        preferred_values = [1..accelerometers.length].map -> .53
 
-          console.log time, 'Inclination', inclination if config.debug
-          $rootScope.$apply -> $rootScope.inclination = inclination
+      [1..accelerometers.length].forEach ->
+        timers.push Date.now()
+        $rootScope.inclinations.push null
 
+      accelerometers.forEach (accelerometer, index) ->
+        accelerometer.on 'data', ->
+          started = true unless started
+          if Date.now() - timers[index] > config.freq
+            timers[index] = Date.now()
+            inclination =
+              time: timers[index]
+              degree: this.inclination
+              scaled: scaleAngle this.inclination
+
+            console.log 'Inclination', index, '\t', inclination if config.debug
+            $rootScope.$apply -> $rootScope.inclinations[index] = inclination
+
+      mainLoop = ->
+        if started
+          unless drawn
+            drawCharts()
+            drawn = true
+          num_posture = 0
+          weights_sum = weights.reduce (acc, v) -> acc + v
+          $rootScope.inclinations.forEach (inclination, index) ->
+            distance = inclination.scaled - preferred_values[index]
+            # num_posture += inclination.scaled * weights[index]
+            num_posture += distance * weights[index]
+
+          $rootScope.posture.time = Date.now()
+          $rootScope.posture.posture += num_posture / weights_sum
+          insertPostureInChart $rootScope.posture
+          console.log 'Posture', $rootScope.posture if config.debug
+
+      window.setInterval mainLoop, config.loopFreq
+
+    $rootScope.exitApp = ->
+      $localStorage.preferred_values = $rootScope.preferred_values
+      $localStorage.weights = weights
+
+      window.close()
+
+    insertPostureInChart = (posture) ->
+      return unless $rootScope.postureChart
+      timeAxis.push posture.time
+      postureAxis.push posture.posture
+      if timeAxis.length > config.chartsWindow
+        timeAxis.shift()
+        postureAxis.shift()
+
+      console.log postureAxis.length, postureAxis
+
+      xAxis = timeAxis.slice()
+      yAxis = postureAxis.slice()
+      xAxis.unshift('x')
+      yAxis.unshift('posture')
+      $rootScope.postureChart.flow
+        columns: [ xAxis, yAxis ]
+        duration: 500
+        # length: config.chartsWindow
+        to: xAxis[1]
+
+    drawCharts = ->
+      xAxis = timeAxis.slice()
+      yAxis = postureAxis.slice()
+      xAxis.unshift('x')
+      yAxis.unshift('posture')
+      $rootScope.postureChart = c3.generate
+        bindto: '#posture-chart'
+        data:
+          type: 'bar'
+          x: 'x'
+          columns: [ xAxis, yAxis ]
+        axis:
+          x:
+            type: 'timeseries'
+            tick:
+              format: '%H:%M:%S'
 ]
