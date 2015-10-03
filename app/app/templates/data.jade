@@ -11,8 +11,10 @@
           .col-xs-6
             strong {{ posture.posture }}
         .row(ng-repeat='inclination in inclinations')
+          .col-xs-2
+            small {{ inclinationsMap[$index] }}
           .col-xs-4
             small {{ inclination.time }}
-          .col-xs-4
+          .col-xs-3
             strong {{ inclination.degree.toFixed(4) }} °
-          .col-xs-4 {{ inclination.scaled.toFixed(4) }}
+          .col-xs-3 {{ inclination.scaled.toFixed(4) }}

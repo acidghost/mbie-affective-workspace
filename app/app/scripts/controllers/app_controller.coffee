@@ -11,6 +11,11 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
     scaleAngle = (angle) ->
       (angle - -180) / (180 - -180)
 
+    $rootScope.scaleToDegree = (distance) ->
+      new_range = 360
+      old_range = 1
+      ((distance * new_range) / old_range)
+
     started = false
     drawn = false
     $rootScope.playing = true
@@ -21,6 +26,7 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
     timers = []
     weights = $localStorage.weights or []
     preferred_values = $localStorage.preferred_values or []
+    $rootScope.inclinationsMap = [ 'knee', 'elbow', 'back' ]
     $rootScope.inclinations = []
     $rootScope.posture =
       time: 0
@@ -61,9 +67,13 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
             drawn = true
           num_posture = 0
           weights_sum = weights.reduce (acc, v) -> acc + v
+          $rootScope.distances = []
           $rootScope.inclinations.forEach (inclination, index) ->
             distance = inclination.scaled - preferred_values[index]
             # num_posture += inclination.scaled * weights[index]
+            $rootScope.distances.push
+              distance: distance
+              weight: weights[index]
             num_posture += distance * weights[index]
 
           posture =
@@ -78,10 +88,13 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
             $rootScope.$apply ->
               $rootScope.systemStopped = true
               $rootScope.playing = false
+              $rootScope.suggestions = []
               $rootScope.userQuestions = [
+                code: 'mood_okay'
                 q: 'Is your mood okay right now?'
                 a: [ 'No', 'Yes' ]
               ]
+              $state.go 'home'
 
       window.setInterval mainLoop, config.loopFreq
 

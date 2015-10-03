@@ -3,13 +3,15 @@
     .panel.panel-default
       .panel-heading
         .panel-title
-          h5 User validation
+          h5 User validation & support
       .panel-body
-        p Some user validation questions here...
+        .row(ng-repeat='suggestion in suggestions')
+          .col-xs-12
+            p.alert.alert-success {{ suggestion }}
         .row(ng-repeat='userQuestion in userQuestions')
           .col-xs-8
             strong {{ userQuestion.q }}
           .col-xs-2
-            button.btn.btn-xs.btn-danger {{ userQuestion.a[0] }}
+            button.btn.btn-xs.btn-danger(ng-click='answerQuestion($index, 0)') {{ userQuestion.a[0] }}
           .col-xs-2
-            button.btn.btn-xs.btn-success {{ userQuestion.a[1] }}
+            button.btn.btn-xs.btn-success(ng-click='answerQuestion($index, 1)') {{ userQuestion.a[1] }}
