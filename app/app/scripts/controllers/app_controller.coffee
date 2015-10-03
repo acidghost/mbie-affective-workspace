@@ -118,7 +118,7 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
       yAxis.unshift('posture')
       $rootScope.postureChart.flow
         columns: [ xAxis, yAxis ]
-        duration: 500
+        duration: Math.round(config.loopFreq / 2)
         # length: config.chartsWindow
         to: xAxis[1]
 
@@ -138,4 +138,7 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
             type: 'timeseries'
             tick:
               format: '%H:%M:%S'
+          y:
+            max: config.postureThreshold
+            min: -config.postureThreshold
 ]

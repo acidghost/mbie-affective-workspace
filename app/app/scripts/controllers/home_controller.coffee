@@ -22,7 +22,7 @@ app.controller 'HomeCtrl', [ '$scope', '$state', 'config',
         # suggest to change some positions
         ranks_dist_weights.forEach (rank) ->
           distance = $scope.$root.distances[rank].distance
-          return if Math.abs(distance) < 0.01
+          return if Math.abs(distance) < config.supportThreshold
           component = $scope.$root.inclinationsMap[rank]
           degrees_to_change = $scope.$root.scaleToDegree(-distance).toFixed 4
           $scope.$root.suggestions.push "Try changing your #{component} position by #{degrees_to_change}"

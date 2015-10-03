@@ -13,6 +13,7 @@ module.exports = {
   chartsWindow: 10,
   postureThreshold: 0.5,
   weightIncrement: 0.1,
+  supportThreshold: 0.01,
   accel: [
     {
       pins: [ 'I0', 'I1' ],
