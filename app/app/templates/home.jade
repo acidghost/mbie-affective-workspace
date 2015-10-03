@@ -7,11 +7,19 @@
       .panel-body
         .row(ng-repeat='suggestion in suggestions')
           .col-xs-12
-            p.alert.alert-success {{ suggestion }}
-        .row(ng-repeat='userQuestion in userQuestions')
+            p.alert.alert-success(ng-show='suggestion in suggestions') {{ suggestion }}
+        .row(ng-show='moodQuestion')
           .col-xs-8
-            strong {{ userQuestion.q }}
+            strong {{ moodQuestion.q }}
           .col-xs-2
-            button.btn.btn-xs.btn-danger(ng-click='answerQuestion($index, 0)') {{ userQuestion.a[0] }}
+            button.btn.btn-xs.btn-danger(ng-click='answerMoodQuestion(0)') {{ moodQuestion.a[0] }}
           .col-xs-2
-            button.btn.btn-xs.btn-success(ng-click='answerQuestion($index, 1)') {{ userQuestion.a[1] }}
+            button.btn.btn-xs.btn-success(ng-click='answerMoodQuestion(1)') {{ moodQuestion.a[1] }}
+        .row(ng-show='componentsQuestion')
+          .col-xs-5
+            strong {{ componentsQuestion.q }}
+          .col-xs-6
+            .btn-group.btn-group-justified
+              label.btn.btn-primary(btn-checkbox=true, ng-model='selectedComponents[$index]', ng-repeat='answer in componentsQuestion.a') {{ answer }}
+          .col-xs-1
+            button.btn.btn-success.btn-xs(ng-click='componentsQuestion.answer(selectedComponents)') Ok

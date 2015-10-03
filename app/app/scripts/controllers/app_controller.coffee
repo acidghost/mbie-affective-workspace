@@ -24,8 +24,9 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
     postureAxis = [ 0.0 ]
 
     timers = []
-    weights = $localStorage.weights or []
-    preferred_values = $localStorage.preferred_values or []
+    $rootScope.weights = $localStorage.weights or []
+    $rootScope.preferred_values = $localStorage.preferred_values or []
+    $rootScope.activatedSensors = [0..config.accel.length - 1]
     $rootScope.inclinationsMap = [ 'knee', 'elbow', 'back' ]
     $rootScope.inclinations = []
     $rootScope.posture =
@@ -36,10 +37,10 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
       console.log 'Board ready' if config.debug.info
       accelerometers = config.accel.map (conf) -> new five.Accelerometer conf
 
-      if weights.length is 0
-        weights = [1..accelerometers.length].map -> 1
-      if preferred_values.length is 0
-        preferred_values = [1..accelerometers.length].map -> .53
+      if $rootScope.weights.length is 0
+        $rootScope.weights = [1..accelerometers.length].map -> 1
+      if $rootScope.preferred_values.length is 0
+        $rootScope.preferred_values = [1..accelerometers.length].map -> .53
 
       [1..accelerometers.length].forEach ->
         timers.push Date.now()
@@ -66,15 +67,15 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
             drawCharts()
             drawn = true
           num_posture = 0
-          weights_sum = weights.reduce (acc, v) -> acc + v
+          weights_sum = $rootScope.weights.reduce (acc, v) -> acc + v
           $rootScope.distances = []
           $rootScope.inclinations.forEach (inclination, index) ->
-            distance = inclination.scaled - preferred_values[index]
-            # num_posture += inclination.scaled * weights[index]
+            distance = inclination.scaled - $rootScope.preferred_values[index]
+            # num_posture += inclination.scaled * $rootScope.weights[index]
             $rootScope.distances.push
               distance: distance
-              weight: weights[index]
-            num_posture += distance * weights[index]
+              weight: $rootScope.weights[index]
+            num_posture += distance * $rootScope.weights[index]
 
           posture =
             time: Date.now()
@@ -89,20 +90,19 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
               $rootScope.systemStopped = true
               $rootScope.playing = false
               $rootScope.suggestions = []
-              $rootScope.userQuestions = [
-                code: 'mood_okay'
+              $rootScope.moodQuestion =
                 q: 'Is your mood okay right now?'
                 a: [ 'No', 'Yes' ]
-              ]
               $state.go 'home'
 
       window.setInterval mainLoop, config.loopFreq
 
     $rootScope.exitApp = ->
       $localStorage.preferred_values = $rootScope.preferred_values
-      $localStorage.weights = weights
+      $localStorage.weights = $rootScope.weights
 
-      gui.App.quit()
+      # Allow saving...
+      window.setTimeout gui.App.quit, 100
 
     insertPostureInChart = (posture) ->
       return unless $rootScope.postureChart
