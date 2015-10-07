@@ -38,16 +38,18 @@ app.controller 'HomeCtrl', [ '$scope', '$state', 'config',
 
         # ... and update weights
         # asking which components cause more stress
-        $scope.selectedComponents = $scope.$root.activatedSensors.map -> false
-        $scope.$root.componentsQuestion =
-          q: 'Which of the following is causing you more stress?'
-          a: $scope.$root.activatedSensors.map (as) -> $scope.$root.inclinationsMap[as]
-          answer: ->
-            console.log 'Components that cause more stress', $scope.selectedComponents if config.debug.info
-            $scope.selectedComponents.forEach (cause_stress, index) ->
-              $scope.$root.weights[index] += config.weightIncrement if cause_stress
-
-            canContinue 'data'
+#        $scope.selectedComponents = $scope.$root.activatedSensors.map -> false
+#        $scope.$root.componentsQuestion =
+#          q: 'Which of the following is causing you more stress?'
+#          a: $scope.$root.activatedSensors.map (as) -> $scope.$root.inclinationsMap[as]
+#          answer: ->
+#            console.log 'Components that cause more stress', $scope.selectedComponents if config.debug.info
+#            $scope.selectedComponents.forEach (cause_stress, index) ->
+#              $scope.$root.weights[index] += config.weightIncrement if cause_stress
+#
+#            canContinue 'data'
+        $scope.$root.weights = ranks_dist_weights.map (rank, i) -> $scope.$root.weights[rank] - (($scope.$root.weights.length - i) * config.weightIncrement)
+        canContinue 'data'
 
     canContinue = (where) ->
       $scope.$root.componentsQuestion = undefined
