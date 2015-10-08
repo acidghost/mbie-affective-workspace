@@ -4,7 +4,7 @@
   "window": {
     "show": true,
     "frame": true,
-    "toolbar": true,
+    "toolbar": false,
     "position": "center",
     "width": 800,
     "height": 800

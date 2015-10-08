@@ -7,6 +7,8 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
     board = new five.Board()
 
     gui = require 'nw.gui'
+    win = gui.Window.get()
+    win.showDevTools() if config.debug.info
 
     scaleAngle = (angle) ->
       (angle - -180) / (180 - -180)
@@ -38,9 +40,9 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
       accelerometers = config.accel.map (conf) -> new five.Accelerometer conf
 
       if $rootScope.weights.length is 0
-        $rootScope.weights = [1..accelerometers.length].map -> 1
+        $rootScope.weights = [1..accelerometers.length].map -> config.initialWeight
       if $rootScope.preferred_values.length is 0
-        $rootScope.preferred_values = [1..accelerometers.length].map -> .53
+        $rootScope.preferred_values = [1..accelerometers.length].map -> config.initialPreferred
 
       [1..accelerometers.length].forEach ->
         timers.push Date.now()
