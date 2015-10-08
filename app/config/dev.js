@@ -10,7 +10,7 @@ module.exports = {
   },
   freq: 100,
   loopFreq: 1000,
-  chartsWindow: 10,
+  chartsWindow: 30,
   postureThreshold: 0.5,
   weightIncrement: 0.1,
   supportThreshold: 0.01,
