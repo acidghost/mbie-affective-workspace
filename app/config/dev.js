@@ -11,6 +11,7 @@ module.exports = {
   freq: 100,
   loopFreq: 1000,
   chartsWindow: 30,
+  maxSeatingIterations: 30,
   postureThreshold: 0.5,
   initialPreferred: 0.53,
   initialWeight: 1,

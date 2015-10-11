@@ -26,6 +26,9 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
     postureAxis = [ 0.0 ]
 
     timers = []
+    $rootScope.seatingIterations = 0
+    breakStartedAt = 0
+    $rootScope.maxSeatingIterations = config.maxSeatingIterations
     $rootScope.weights = $localStorage.weights or []
     $rootScope.preferred_values = $localStorage.preferred_values or []
     $rootScope.activatedSensors = [0..config.accel.length - 1]
@@ -63,11 +66,19 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
             $rootScope.$apply -> $rootScope.inclinations[index] = inclination
 
       mainLoop = ->
+        if breakStartedAt isnt 0
+          reduceBy = Math.round(breakStartedAt / 12)
+          if $rootScope.seatingIterations >= reduceBy
+            $rootScope.$apply -> $rootScope.seatingIterations -= reduceBy
+          else
+            $rootScope.seatingIterations = 0
+            breakStartedAt = 0
         return if not $rootScope.playing or $rootScope.systemStopped
         if started
           unless drawn
             drawCharts()
             drawn = true
+
           num_posture = 0
           weights_sum = $rootScope.weights.reduce (acc, v) -> acc + v
           $rootScope.distances = []
@@ -92,6 +103,8 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
           insertPostureInChart posture
           console.log 'Posture', posture if config.debug.sensors
 
+          $rootScope.seatingIterations++
+
           if posture.posture > config.postureThreshold
             console.log 'Posture th. reached' if config.debug.info
             $rootScope.$apply ->
@@ -111,6 +124,10 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
 
       # Allow saving...
       window.setTimeout gui.App.quit, 100
+
+    $rootScope.takeBreak = ->
+      $rootScope.playing = false
+      breakStartedAt = $rootScope.seatingIterations
 
     insertPostureInChart = (posture) ->
       return unless $rootScope.postureChart

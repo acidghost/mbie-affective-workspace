@@ -5,9 +5,15 @@
         .panel-title
           h5 User validation & support
       .panel-body
-        .row(ng-show='suggestions.length > 0')
+        .row
           .col-xs-12
-            p.alert.alert-success(ng-repeat='suggestion in suggestions') {{ suggestion }}
+            .alert.alert-danger(ng-show='seatingIterations > maxSeatingIterations')
+              .row
+                .col-xs-9
+                  p You might consider taking a break and standing up for a bit (you've spent the last {{ seatingIterations }} seconds seating)
+                .col-xs-3
+                  button.btn.btn-success.btn-xs(ng-click='takeBreak()') Take a break
+            p.alert.alert-warning(ng-repeat='suggestion in suggestions') {{ suggestion }}
         .row(ng-show='moodQuestion')
           .col-xs-8
             strong {{ moodQuestion.q }}
