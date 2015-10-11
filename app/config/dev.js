@@ -13,7 +13,8 @@ module.exports = {
   chartsWindow: 30,
   postureThreshold: 0.5,
   initialPreferred: 0.53,
-  initialWeight: .8,
+  initialWeight: 1,
+  postureDecrement: 0.01,
   weightIncrement: 0.1,
   supportThreshold: 0.01,
   accel: [

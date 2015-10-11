@@ -77,16 +77,22 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
             $rootScope.distances.push
               distance: distance
               weight: $rootScope.weights[index]
-            num_posture += distance * $rootScope.weights[index]
+            num_posture += Math.abs(distance) * $rootScope.weights[index]
+
+          thisPosture = num_posture / weights_sum
+          if thisPosture < config.postureDecrement
+            thisPosture = 0
+            unless $rootScope.posture.posture < config.postureDecrement
+              thisPosture = -config.postureDecrement
 
           posture =
             time: Date.now()
-            posture: $rootScope.posture.posture + num_posture / weights_sum
+            posture: $rootScope.posture.posture + thisPosture
           $rootScope.posture = posture
           insertPostureInChart posture
           console.log 'Posture', posture if config.debug.sensors
 
-          if Math.abs(posture.posture) > config.postureThreshold
+          if posture.posture > config.postureThreshold
             console.log 'Posture th. reached' if config.debug.info
             $rootScope.$apply ->
               $rootScope.systemStopped = true
@@ -142,5 +148,5 @@ app.controller 'AppCtrl', [ '$rootScope', '$state', '$localStorage', 'config',
               format: '%H:%M:%S'
           y:
             max: config.postureThreshold
-            min: -config.postureThreshold
+            min: 0
 ]

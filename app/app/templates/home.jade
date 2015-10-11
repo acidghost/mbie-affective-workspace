@@ -7,7 +7,7 @@
       .panel-body
         .row(ng-show='suggestions.length > 0')
           .col-xs-12
-            p.alert.alert-success(ng-show='suggestion in suggestions') {{ suggestion }}
+            p.alert.alert-success(ng-repeat='suggestion in suggestions') {{ suggestion }}
         .row(ng-show='moodQuestion')
           .col-xs-8
             strong {{ moodQuestion.q }}

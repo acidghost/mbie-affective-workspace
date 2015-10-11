@@ -48,9 +48,15 @@ app.controller 'HomeCtrl', [ '$scope', '$state', 'config',
 #              $scope.$root.weights[index] += config.weightIncrement if cause_stress
 #
 #            canContinue 'data'
-        $scope.$root.weights = ranks_dist_weights.map (rank, i) ->
-          decremented = $scope.$root.weights[rank] - (($scope.$root.weights.length - i) * config.weightIncrement)
-          if decremented < 0 then 0 else decremented
+
+#        $scope.$root.weights = ranks_dist_weights.map (rank, i) ->
+#          decremented = $scope.$root.weights[rank] - (($scope.$root.weights.length - i) * config.weightIncrement)
+
+
+        weight_to_change = ranks_dist_weights[0]
+        decremented = $scope.$root.weights[weight_to_change] - config.weightIncrement
+        $scope.$root.weights[weight_to_change] = if decremented < 0 then 0 else decremented
+
         canContinue 'data'
 
     canContinue = (where) ->
